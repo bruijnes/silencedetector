@@ -1,0 +1,6 @@
+services:
+  silencedetector:
+    build:
+      context: .
+    env_file:
+      - .env
