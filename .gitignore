@@ -1,8 +1,5 @@
 .env
 */.env
-venv
-*/venv
-pyvenv.cfg
 .gitignore
 log
 ffmpeg
