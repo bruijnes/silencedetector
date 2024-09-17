@@ -1,1 +1,8 @@
 .env
+*/.env
+venv
+*/venv
+pyvenv.cfg
+.git
+.gitignore
+log/

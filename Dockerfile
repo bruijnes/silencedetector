@@ -1,15 +1,20 @@
-# Use the Alpine Linux base image
-FROM alpine:latest
+# Use an official Python runtime as a parent image
+FROM python:3.12-slim
 
-# Set the working directory in the container
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# Copy the necessary scripts into the container
-COPY monitor.sh /app/
+# Copy the requirements.txt into the container
+COPY requirements.txt ./
 
-# Make scripts executable
-RUN chmod +x /app/monitor.sh
-RUN apk update
-RUN apk add curl ffmpeg grep
+# Install the Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD [ "/bin/sh", "-c", "/app/monitor.sh" ]
+# Install FFmpeg
+RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
+
+# Copy the current directory contents into the container
+COPY . .
+
+# Command to run the script
+CMD ["python", "./silencedetector.py"]
