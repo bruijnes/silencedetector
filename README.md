@@ -1,6 +1,3 @@
-Here is the raw version of your `README.md`:
-
-```markdown
 # Silence Detector
 
 Silence Detector is a Python-based tool that monitors audio streams for silence events. It uses FFmpeg to process streams and send notifications using the Pushover API when silence is detected. The system automatically restarts FFmpeg processes every hour to ensure stability and performance.
