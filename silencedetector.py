@@ -51,11 +51,12 @@ def get_streams():
     return streams
 
 # Function to send a Pushover notification with optional parameters
-def send_pushover(identifier, message, user_key, app_token, priority=0, expire=0, retry=0):
+def send_pushover(identifier, message, url, user_key, app_token, priority=0, expire=0, retry=0):
     payload = {
         'token': app_token,
         'user': user_key,
         'message': message,
+        'url': url,
         'priority': priority,
         'expire': expire,
         'retry': retry,
@@ -85,7 +86,7 @@ def cancel_pushover_by_tag(identifier, user_key, app_token):
         logging.error(f"Error canceling Pushover notification for {identifier}: {e}")
 
 # Function to capture and monitor ffmpeg output for silence events
-def monitor_ffmpeg_process(proc, identifier, user_key, app_token):
+def monitor_ffmpeg_process(proc, url, identifier, user_key, app_token):
     logging.info(f"Monitoring FFmpeg output for {identifier}")
     for line in iter(proc.stderr.readline, b''):
         decoded_line = line.decode('utf-8').strip()
@@ -93,11 +94,11 @@ def monitor_ffmpeg_process(proc, identifier, user_key, app_token):
         
         if "silence_start" in decoded_line:
             logging.info(f"Silence started for {identifier}")
-            send_pushover(identifier, f"Silence started for {identifier} at {time.strftime('%Y-%m-%d %H:%M:%S')}", user_key, app_token, priority=2, expire=3600, retry=60)
+            send_pushover(identifier, f"Silence started for {identifier} at {time.strftime('%Y-%m-%d %H:%M:%S')}", url, user_key, app_token, priority=2, expire=3600, retry=60)
         elif "silence_end" in decoded_line:
             logging.info(f"Silence ended for {identifier}")
             cancel_pushover_by_tag(identifier, user_key, app_token)
-            send_pushover(identifier, f"Audio started for {identifier} at {time.strftime('%Y-%m-%d %H:%M:%S')}", user_key, app_token, priority=1)
+            send_pushover(identifier, f"Audio started for {identifier} at {time.strftime('%Y-%m-%d %H:%M:%S')}", url, user_key, app_token, priority=1)
 
 # Function to start the ffmpeg process and capture its output
 def start_ffmpeg_process(url, identifier, user_key, app_token, loudness, silence_timeout):
@@ -112,7 +113,7 @@ def start_ffmpeg_process(url, identifier, user_key, app_token, loudness, silence
     proc = subprocess.Popen(ffmpeg_command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     
     # Start monitoring the ffmpeg output in a thread
-    monitor_thread = threading.Thread(target=monitor_ffmpeg_process, args=(proc, identifier, user_key, app_token), daemon=True)
+    monitor_thread = threading.Thread(target=monitor_ffmpeg_process, args=(proc, identifier, url, user_key, app_token), daemon=True)
     monitor_thread.start()
 
     ffmpeg_processes[identifier] = (proc, monitor_thread)
