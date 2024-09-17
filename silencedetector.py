@@ -97,6 +97,7 @@ def monitor_ffmpeg_process(proc, identifier, user_key, app_token):
         elif "silence_end" in decoded_line:
             logging.info(f"Silence ended for {identifier}")
             cancel_pushover_by_tag(identifier, user_key, app_token)
+            send_pushover(identifier, f"Audio started for {identifier} at {time.strftime('%Y-%m-%d %H:%M:%S')}", user_key, app_token, priority=1)
 
 # Function to start the ffmpeg process and capture its output
 def start_ffmpeg_process(url, identifier, user_key, app_token, loudness, silence_timeout):
