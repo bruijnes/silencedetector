@@ -5,4 +5,5 @@ venv
 pyvenv.cfg
 .git
 .gitignore
-log/
+log
+ffmpeg
