@@ -1,0 +1,39 @@
+name: Build and Deploy to Docker Hub
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to the 'main' branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Docker Buildx (optional but recommended for better performance)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: bruijnes
+          password: ${{ secrets.DOCKERHUB_PAT }}  # You need to add your PAT as a secret in GitHub
+
+      # Build and push the Docker image to Docker Hub
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: bruijnes/silencedetector:latest
+
+      # Optionally, you can add a step to log out from Docker Hub
+      - name: Log out from Docker Hub
+        run: docker logout
