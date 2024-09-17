@@ -67,6 +67,7 @@ USER_KEY1=your_user_key_for_HD
 APP_TOKEN1=your_app_token_for_HD
 LOUDNESS1=-30
 SILENCE_TIMEOUT1=5
+TIMEZONE1="Europe/London"
 
 URL2=https://stream.to.be/monitored
 ID2=Example2
@@ -74,6 +75,7 @@ USER_KEY2=your_user_key_for_mobile
 APP_TOKEN2=your_app_token_for_mobile
 LOUDNESS2=-30
 SILENCE_TIMEOUT2=5
+TIMEZONE2="Europe/London"
 ```
 
 ### Step 4: Run the script
@@ -124,6 +126,7 @@ All streams and related parameters are configured using the `.env` file.
 - **APP_TOKEN**: Your Pushover app token.
 - **LOUDNESS**: Loudness level for FFmpeg silence detection.
 - **SILENCE_TIMEOUT**: How long silence should be detected before being reported.
+- **TIMEZONE**: You're local timezone.
 
 Example:
 
@@ -134,6 +137,7 @@ USER_KEY1=your_user_key
 APP_TOKEN1=your_app_token
 LOUDNESS1=-30
 SILENCE_TIMEOUT1=5
+TIMEZONE1="Europa/London"
 ```
 
 Any additional streams can be monitored using URL2, URL3, ULx and so on.

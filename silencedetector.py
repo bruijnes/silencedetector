@@ -5,6 +5,8 @@ import requests
 import os
 import logging
 from dotenv import load_dotenv
+from datetime import datetime
+import pytz
 
 # Load environment variables from .env file
 load_dotenv()
@@ -25,8 +27,16 @@ logging.basicConfig(
     ]
 )
 
+# Load timezone from the environment or default to CEST (Europe/Amsterdam)
+TIMEZONE = os.getenv("TIMEZONE", "Europe/Amsterdam")
+
 # Global dictionary to keep track of FFmpeg processes and their threads
 ffmpeg_processes = {}
+
+# Function to get the current time in the correct timezone
+def get_current_time_in_timezone():
+    timezone = pytz.timezone(TIMEZONE)
+    return datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S')
 
 # Function to get streams, user keys, app tokens, loudness, and silence timeout from environment variables
 def get_streams():
@@ -97,11 +107,11 @@ def monitor_ffmpeg_process(proc, url, identifier, user_key, app_token):
         
         if "silence_start" in decoded_line:
             logging.info(f"Silence started for {identifier}")
-            send_pushover(identifier, f"Silence started for {identifier} at {time.strftime('%Y-%m-%d %H:%M:%S')}", url, user_key, app_token, priority=2, expire=3600, retry=60)
+            send_pushover(identifier, f"Silence started for {identifier} at {get_current_time_in_timezone()}", url, user_key, app_token, priority=2, expire=3600, retry=60)
         elif "silence_end" in decoded_line:
             logging.info(f"Silence ended for {identifier}")
             cancel_pushover_by_tag(identifier, user_key, app_token)
-            send_pushover(identifier, f"Audio started for {identifier} at {time.strftime('%Y-%m-%d %H:%M:%S')}", url, user_key, app_token, priority=1)
+            send_pushover(identifier, f"Audio started for {identifier} at {get_current_time_in_timezone()}", url, user_key, app_token, priority=1)
 
 # Function to start the ffmpeg process and capture its output
 def start_ffmpeg_process(url, identifier, user_key, app_token, loudness, silence_timeout):
