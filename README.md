@@ -204,4 +204,3 @@ Contributions, issues, and feature requests are welcome! Feel free to check out 
 
 Developed by **bruijnes**.
 
----

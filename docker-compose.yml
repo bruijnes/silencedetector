@@ -1,6 +1,6 @@
-services:
+ services:
   silencedetector:
-    build:
-      context: .
+    image: bruijnes/silencedetector:latest  # Pulls your image from Docker Hub
     env_file:
-      - .env
+      - .env  # Loads environment variables from the .env file
+    restart: always  # Automatically restart the container if it crashes
