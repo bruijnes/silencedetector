@@ -34,7 +34,7 @@ def get_streams():
     index = 1
     while True:
         url = os.getenv(f"URL{index}")
-        identifier = os.getenv(f"ID{index}")
+        identifier = os.getenv(f"ID{index}")  # Use identifier as the tag for notifications
         user_key = os.getenv(f"USER_KEY{index}")
         app_token = os.getenv(f"APP_TOKEN{index}")
         loudness = os.getenv(f"LOUDNESS{index}", "-30")  # Default loudness is -30 if not provided
@@ -52,15 +52,17 @@ def get_streams():
 
 # Function to send a Pushover notification with optional parameters
 def send_pushover(identifier, message, url, user_key, app_token, priority=0, expire=0, retry=0):
+    # Set the identifier as the tag
     payload = {
         'token': app_token,
         'user': user_key,
         'message': message,
         'url': url,
+        'url_title': 'Stream URL',  # Add a clickable title for the URL
         'priority': priority,
         'expire': expire,
         'retry': retry,
-        'tags': identifier
+        'tags': identifier  # Use identifier as the tag for canceling later
     }
     try:
         response = requests.post('https://api.pushover.net/1/messages.json', data=payload)
@@ -74,6 +76,7 @@ def send_pushover(identifier, message, url, user_key, app_token, priority=0, exp
 # Function to cancel a Pushover notification by tag (identifier)
 def cancel_pushover_by_tag(identifier, user_key, app_token):
     try:
+        # Use the identifier as the tag to cancel
         response = requests.post(f'https://api.pushover.net/1/receipts/cancel_by_tag/{identifier}.json', data={
             'token': app_token,
             'user': user_key
@@ -113,7 +116,7 @@ def start_ffmpeg_process(url, identifier, user_key, app_token, loudness, silence
     proc = subprocess.Popen(ffmpeg_command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     
     # Start monitoring the ffmpeg output in a thread
-    monitor_thread = threading.Thread(target=monitor_ffmpeg_process, args=(proc, identifier, url, user_key, app_token), daemon=True)
+    monitor_thread = threading.Thread(target=monitor_ffmpeg_process, args=(proc, url, identifier, user_key, app_token), daemon=True)
     monitor_thread.start()
 
     ffmpeg_processes[identifier] = (proc, monitor_thread)
