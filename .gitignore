@@ -3,7 +3,6 @@
 venv
 */venv
 pyvenv.cfg
-.git
 .gitignore
 log
 ffmpeg
